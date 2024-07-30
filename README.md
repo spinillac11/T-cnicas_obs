@@ -1,1 +1,1 @@
-# T-cnicas_obs
+# Técnicas_obs
