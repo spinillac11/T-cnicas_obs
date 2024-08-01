@@ -26,7 +26,7 @@ center_box_size=7
 # Se importa la libreria "glob" con el fin de trabajar con una lista con todos los fits 
 import glob
 # Directorio en donde se encuentran las imagenes fits  
-carpeta = "./" 
+carpeta = "./FITS_IRAC/" 
 
 # Busqueda de los archivos .fits
 archivos = glob.glob(carpeta + '*.fits')
@@ -50,7 +50,7 @@ else:
 # Carga del catálogo con coordenadas e identificador :  RA DEC ID
 # !!!!!!! FORMATO DEBE ESTAR EN: RA - DEC - ID   
 import numpy as np
-archivo_catalogo = "./cat.txt" 
+archivo_catalogo = "./Input/I1_filtrado.txt" 
 
 catalogo = open(archivo_catalogo,"r")
 objects = catalogo.readlines()
@@ -339,7 +339,7 @@ for foc in filtro_final.keys():
     final_obs_table[j.colnames[7] + '_' + str(counter//3)] = j[j.colnames[7]]
     final_obs_table[j.colnames[11] + '_' + j.colnames[6] + '_' + str(counter//3)] = j[j.colnames[11]]
     counter += 1
-  final_obs_table.write(f'./Table_{foc}.csv', overwrite=True)    
+  final_obs_table.write(f'./IRAC_output/Table_{foc}.csv', overwrite=True)    
 
 
 
