@@ -50,7 +50,7 @@ else:
 # Carga del catálogo con coordenadas e identificador :  RA DEC ID
 # !!!!!!! FORMATO DEBE ESTAR EN: RA - DEC - ID   
 import numpy as np
-archivo_catalogo = "./Input/W1_filtrado.txt" 
+archivo_catalogo = "./Input/w1_filtrado.txt" 
 
 catalogo = open(archivo_catalogo,"r")
 objects = catalogo.readlines()
@@ -93,11 +93,30 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
 #print(w.array_shape)
 #print(w.world_axis_physical_types)
  # airmass = fits_header['AIRMASS']
-  itime  = fits_header['EXPTIME'] 
-  ifilter = fits_header['CHNLNUM']  
-  DateObs = fits_header['DATE_OBS']
-  target = fits_header['OBJECT']
-  epadu = fits_header['GAIN']
+  ifilter = fits_header['BAND']  
+  DateObs = fits_header['MIDOBS']
+  target = fits_header['COADDID']
+
+#gain for wise
+  if ifilter == 1:
+    epadu =  3.2
+    itime  = 7.7 #sec
+  elif ifilter == 2:
+    epadu = 3.83
+    itime  = 7.7 #sec
+  elif ifilter == 3:
+    epadu = 6.83
+    itime = 8.8*fits_header['FRC8P8ET'] \
+    + 4.4*fits_header['FRC4P4ET'] \
+    + 2.2*fits_header['FRC2P2ET'] \
+    + 1.1**fits_header['FRC1P1ET'] #sec
+  elif ifilter == 4:
+    epadu = 24.5
+    itime  = 8.8 #sec
+  else:
+    epadu = 24.5
+    itime  = 8.8 #sec
+
   F.close()
 
   image=fits_data
@@ -189,15 +208,15 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
   starloc = list(zip(x,y))
 #print(starloc)
   if ifilter == 1:
-    zmag =  18.8027
+    zmag =  20.5
   elif ifilter == 2:
-    zmag = 18.3177
+    zmag = 19.5
   elif ifilter == 3:
-    zmag = 17.8331
+    zmag = 18
   elif ifilter == 4:
-    zmag = 17.2120
+    zmag = 13
   else:
-    zmag = 17.2120
+    zmag = 13
   print(zmag)  
 
     
@@ -243,7 +262,7 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
  # phot_table['Rint'] = r_in
  # phot_table['Rout'] = r_out
  # phot_table['AIRTEMP'] = ccdtemp
-  phot_table['OBJECT'] = fits_header['OBJECT']
+  phot_table['COADDID'] = fits_header['COADDID']
   # Se buscan los indices en donde las magnitudes sean NaN y se eliminan
   index_nan = np.argwhere(np.isnan(phot_table[name_mag + '_mag'].data)) 
   phot_table.remove_rows(index_nan)
@@ -275,7 +294,7 @@ focus_object = []
 for m in all_tables:
   
  #if m != []:
-  ob = m['OBJECT'][0]
+  ob = m['COADDID'][0]
   
   if ob not in focus_object:
     
@@ -289,7 +308,7 @@ for s in focus_object:
 #----#  Se llena el diccionario
 for n in all_tables:
   for p in focus_object:
-    ob = n['OBJECT'][0]
+    ob = n['COADDID'][0]
     if ob == p:
       filtro_final[ob].append(n.copy())  # Ejemplo: filtro_final = {'SA98':[tabla1,tabla2,tabla3,..], ... , 'SA92':[tabla1,tabla2,tabla3,..]}
 
