@@ -48,11 +48,8 @@ I_filtered = pd.DataFrame(I_filtered_array)
 # Fusionar los datos del paralaje con los datos filtrados
 merged_data = I_filtered.merge(parallax_data, left_on='OBJECT_ID', right_on='identifier')
 
-# Convertir el paralaje de milisegundos de arco a segundos de arco
-merged_data['parallax_arcsec'] = merged_data['parallax'] / 1000.0
-
 # Calcular la distancia en parsecs
-merged_data['distance_pc'] = 1000.0 / merged_data['parallax_arcsec']
+merged_data['distance_pc'] = 1000.0 / merged_data['parallax']
 
 # Calcular la magnitud absoluta usando la fórmula M = m - 5 log10(d) + 5
 for mag in [mag1, mag2, mag3, mag4]:
