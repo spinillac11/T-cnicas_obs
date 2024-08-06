@@ -21,7 +21,7 @@
 # OUTPUT : Archivos de texto plano *csv 
            
 # INICIO DEL PROGRAMA #
-center_box_size=7
+center_box_size= 7
            
 # Se importa la libreria "glob" con el fin de trabajar con una lista con todos los fits 
 import glob
@@ -161,12 +161,15 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
   ID = np.array(ID,dtype='U20')
 
   # Eliminar los objetos que no esten en el archivo fits (en caso de que la funcion is_in_pic() haya fallado numericamente)
-  mm = [ 0 < i[2] and i[2] < (image.shape[0] - 1) for i in Final_List] # Lista de [Booleanos] (x) en las cuales las posiciones si esten en la imagen
-  ID = ID[mm]
-  Final_List = Final_List[mm]
-  nn = [ 0 < i[3] and i[3] < (image.shape[1] - 1) for i in Final_List] # Lista de [Booleanos] (y) en las cuales las posiciones si esten en la imagen
-  ID = ID[nn]
-  Final_List = Final_List[nn]
+  ########################### Acá estaba el error ############################
+  # Eliminar los objetos que no esten en el archivo fits (en caso de que la funcion is_in_pic() haya fallado numericamente)
+  #mm = [ 0 < i[2] and i[2] < (image.shape[0] - 1) for i in Final_List] # Lista de [Booleanos] (x) en las cuales las posiciones si esten en la imagen
+  #ID = ID[mm]
+  #Final_List = Final_List[mm]
+  #nn = [ 0 < i[3] and i[3] < (image.shape[1] - 1) for i in Final_List] # Lista de [Booleanos] (y) en las cuales las posiciones si esten en la imagen
+  #ID = ID[nn]
+  #Final_List = Final_List[nn]
+  ###########################################################################
 
 # IDs repetidos se categorizan 
   u, c = np.unique(ID, return_counts=True)
@@ -273,9 +276,9 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
 #########################################
 # Definición de parámetros fotométricos #
 #########################################
-r = 6 #Apertura en px
-r_in = 6 #Radio interno anillo cielo
-r_out = 14 #Radio externo
+r = 9 #Apertura en px
+r_in = 9 #Radio interno anillo cielo
+r_out = 20 #Radio externo
 #########################################
 # Se imprime la tabla en un archivo de texto plano
 all_tables = []

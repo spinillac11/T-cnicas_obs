@@ -111,8 +111,7 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
       ra_max = w.array_index_to_world_values(image.shape[0], image.shape[1])[0]
     if dec_min > dec_max:
       dec_min = w.array_index_to_world_values(0,0)[1]
-      dec_max = w.array_index_to_world_values(image.shape[0], image.shape[1])[1]
-      
+      dec_max = w.array_index_to_world_values(image.shape[0], image.shape[1])[1] 
     return (ra < ra_max) & (ra > ra_min) & (dec < dec_max) & (dec >   dec_min)
   NewListO = open(f"Objectlist_{fits_name}.out", "w")
   # Contador de objetos de catálogo que están en la imágen
@@ -141,13 +140,15 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
   Final_List = np.array(list(zip(RA,DEC,x,y)), dtype=float)
   ID = np.array(ID,dtype='U20')
 
+  ########################### Acá estaba el error ############################
   # Eliminar los objetos que no esten en el archivo fits (en caso de que la funcion is_in_pic() haya fallado numericamente)
-  mm = [ 0 < i[2] and i[2] < (image.shape[0] - 1) for i in Final_List] # Lista de [Booleanos] (x) en las cuales las posiciones si esten en la imagen
-  ID = ID[mm]
-  Final_List = Final_List[mm]
-  nn = [ 0 < i[3] and i[3] < (image.shape[1] - 1) for i in Final_List] # Lista de [Booleanos] (y) en las cuales las posiciones si esten en la imagen
-  ID = ID[nn]
-  Final_List = Final_List[nn]
+  #mm = [ 0 < i[2] and i[2] < (image.shape[0] - 1) for i in Final_List] # Lista de [Booleanos] (x) en las cuales las posiciones si esten en la imagen
+  #ID = ID[mm]
+  #Final_List = Final_List[mm]
+  #nn = [ 0 < i[3] and i[3] < (image.shape[1] - 1) for i in Final_List] # Lista de [Booleanos] (y) en las cuales las posiciones si esten en la imagen
+  #ID = ID[nn]
+  #Final_List = Final_List[nn]
+  ###########################################################################
 
 # IDs repetidos se categorizan 
   u, c = np.unique(ID, return_counts=True)
