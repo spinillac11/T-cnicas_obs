@@ -57,9 +57,29 @@ merged_data_I['distance_pc'] = 1000.0 / merged_data_I['parallax']
 merged_data_W['distance_pc'] = 1000.0 / merged_data_W['parallax']
 
 # Calcular la magnitud absoluta usando la fórmula M = m - 5 log10(d) + 5
-for mag in [mag1, mag2, mag3, mag4, 'Gmag']:
-    merged_data_I[f'abs_{mag}'] = merged_data_I[mag] - 5 * np.log10(merged_data_I['distance_pc']) + 5
-    merged_data_W[f'abs_{mag}'] = merged_data_W[mag] - 5 * np.log10(merged_data_W['distance_pc']) + 5
+#for mag in [mag1, mag2, mag3, mag4, 'Gmag']:
+    #merged_data_I[f'abs_{mag}'] = merged_data_I[mag] - 5 * np.log10(merged_data_I['distance_pc']) + 5
+    #merged_data_W[f'abs_{mag}'] = merged_data_W[mag] - 5 * np.log10(merged_data_W['distance_pc']) + 5
+
+# Array con los valores A_lambda / A_v de WEBDA
+#                           J	    H	    Ks	   IRAC_3.6	IRAC_4.5 IRAC_5.8 IRAC_8.0 MIPS_24  MIPS_70	 MIPS_160	W1	      W2	   W3	    W4
+WebdaValues = np.array([0.28665, 0.18082, 0.11675, 0.05228,	0.03574, 0.02459, 0.01433, 0.00245, 0.00041, 0.00012, 0.05688, 0.03427, 0.00707, 0.00274])
+
+# Calcula la magnitud absoluta y corrige por extinsión usando la fórmula M = m - 5 log10(d) + 5 - A_channel
+# A_lambda = 3.1 * ReddeningLambdaOrionis * WebdaValue
+# A_lambda = 3.1 * 0.05 * WebdaValue
+# IRAC
+merged_data_I[f'abs_{mag1}'] = merged_data_I[mag1] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[3]
+merged_data_I[f'abs_{mag2}'] = merged_data_I[mag2] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[4]
+merged_data_I[f'abs_{mag3}'] = merged_data_I[mag3] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[5]
+merged_data_I[f'abs_{mag4}'] = merged_data_I[mag4] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[6]
+merged_data_I[f'abs_Gmag'] = merged_data_I['Gmag'] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05
+# WISE
+merged_data_W[f'abs_{mag1}'] = merged_data_W[mag1] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[10]
+merged_data_W[f'abs_{mag2}'] = merged_data_W[mag2] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[11]
+merged_data_W[f'abs_{mag3}'] = merged_data_W[mag3] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[12]
+merged_data_W[f'abs_{mag4}'] = merged_data_W[mag4] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[13]
+merged_data_W[f'abs_Gmag'] = merged_data_W['Gmag'] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05
 
 # Imprimir los resultados
 print(merged_data_I[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
