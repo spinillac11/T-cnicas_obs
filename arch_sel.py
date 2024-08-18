@@ -1,22 +1,29 @@
 import pandas as pd
 import os
 
-# Nombre del archivo de entrada
-input_file = './Input/w1.tsv'  # Reemplaza con el nombre de tu archivo
+# Nombre del archivos de entrada
+input_file1 = './Input/I1.tsv'  
+input_file2 = './Input/w1.tsv'  
 
 # Extrae el nombre del archivo sin la extensión
-base_name = os.path.splitext(input_file)[0]
+base_name1 = os.path.splitext(input_file1)[0]
+base_name2 = os.path.splitext(input_file2)[0]
 
 # Define el nombre del archivo de salida con el sufijo '_filtrado'
-output_file = f'{base_name}_filtrado.txt'
+output_file1 = f'{base_name1}_filtrado.txt'
+output_file2 = f'{base_name2}_filtrado.txt'
 
-# Lee el archivo TSV y omite la primera fila (usando skiprows)
-df = pd.read_csv(input_file, sep='\t', skiprows=1)
+# Lee el archivo TSV y omite el header
+df1 = pd.read_csv(input_file1, sep='\t', skiprows=0)
+df2 = pd.read_csv(input_file2, sep='\t', skiprows=0)
 
-# Selecciona solo las columnas 1, 2 y 7 (pandas usa indexación basada en 0)
-df_filtered = df.iloc[:, [0, 1, 6]]
+# Selecciona las columnas AR, DEJ, ID, Plx, Plx_E y Gmag
+df1_filtered = df1.iloc[:, [0, 1, 6, 7, 8, 16, 17]]
+df2_filtered = df2.iloc[:, [0, 1, 6, 7, 8, 16, 17]]
 
-# Guarda el nuevo archivo .txt con columnas separadas por un espacio
-df_filtered.to_csv(output_file, sep=' ', index=False, header=False)
+# Guarda el nuevo archivo .txt 
+df1_filtered.to_csv(output_file1, sep=' ', index=False, header=False)
+df2_filtered.to_csv(output_file2, sep=' ', index=False, header=False)
 
-print(f'Archivo procesado y guardado como {output_file}')
+print(f'Archivo procesado y guardado como {output_file1}')
+print(f'Archivo procesado y guardado como {output_file2}')
