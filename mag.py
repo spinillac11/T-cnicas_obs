@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pylab as plt
 
+
 # Lee el archivo de IRAC y WISE
 I = pd.read_csv('./IRAC_output/Table_B35.csv')
 ##### WISE
@@ -31,11 +32,13 @@ W3_error_pct = np.abs(W_array[mag3_error] / W_array[mag3]) * 100
 W4_error_pct = np.abs(W_array[mag4_error] / W_array[mag4]) * 100
 
 M1_error_pct = np.abs(M_array[mag1_error] / M_array[mag1]) * 100
-M2_error_pct = np.abs(M_array[mag2_error] / M_array[mag2]) * 100
+## M2_error_pct = np.abs(M_array[mag2_error] / M_array[mag2]) * 100
+
 # Filtrar índices donde el error porcentual es <= 20%
 I_valid_indices = (I1_error_pct <= 20) & (I2_error_pct <= 20) & (I3_error_pct <= 20) & (I4_error_pct <= 20) 
 W_valid_indices = (W1_error_pct <= 20) & (W2_error_pct <= 20) & (W3_error_pct <= 20) & (W4_error_pct <= 20)
-M_valid_indices = (M1_error_pct <= 20) & (M2_error_pct <= 20) 
+M_valid_indices = (M1_error_pct <= 20)  
+## & (M2_error_pct <= 20)
 
 # Aplicar el filtro a todos los arrays
 I_filtered_array = {col: I_array[col][I_valid_indices] for col in I.columns}
@@ -98,11 +101,11 @@ merged_data_W[f'abs_{mag4}'] = merged_data_W[mag4] - 5 * np.log10(merged_data_W[
 merged_data_W[f'abs_Gmag'] = merged_data_W['Gmag'] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05
 #MIPS
 merged_data_M[f'abs_{mag1}'] = merged_data_M[mag1] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[7]
-merged_data_M[f'abs_{mag2}'] = merged_data_M[mag2] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[8]
+## merged_data_M[f'abs_{mag2}'] = merged_data_M[mag2] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[8]
 merged_data_M[f'abs_Gmag'] = merged_data_M['Gmag'] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.05
 
 # Imprimir los resultados
-#print(merged_data_I[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
+print(merged_data_I[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
 #print(merged_data_W[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
 #print(merged_data_M[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', 'abs_Gmag', 'parallax', 'parallax_err']])
 
@@ -122,7 +125,7 @@ merged_IW['4.5-22'] = merged_IW[f'abs_{mag2}_I'] - merged_IW[f'abs_{mag4}_W']
 
 #Colores [Gmag-3.6] y [4.5-24]
 merged_IM['Gmag-3.6'] = merged_IM['abs_Gmag_I'] - merged_IM[f'abs_{mag1}_I']
-merged_IM['4.5-24'] = merged_IM[f'abs_{mag2}_I'] - merged_IM[f'abs_{mag1}_M']
+#merged_IM['4.5-24'] = merged_IM[f'abs_{mag2}_I'] - merged_IM[f'abs_{mag1}_M']
 
 # Crear el diagrama color-color
 plt.figure(figsize=(10, 6))
@@ -143,10 +146,27 @@ plt.grid(True)
 plt.savefig('./Figuras/[Gmag-3.6]_[4.5-22].png')
 
 # Crear el diagrama color-color
+##plt.figure(figsize=(10, 6))
+##plt.scatter(merged_IM['4.5-24'], merged_IM['Gmag-3.6'], alpha=0.5)
+##plt.xlabel('[4.5-24]')
+##plt.ylabel('[Gmag-3.6]')
+##plt.title('Diagrama Color-Color desenrojecido')
+##plt.grid(True)
+##plt.savefig('./Figuras/[Gmag-3.6]_[4.5-24].png')
+
+################# SEDS ##############
+
+final_merge = pd.merge(merged_IW, merged_data_M, on='OBJECT_ID', suffixes=('', '_M'))
+
+final_merge['3.6-4.5'] = final_merge[f'abs_{mag1}_I'] - final_merge[f'abs_{mag2}_I']
+final_merge['5.8-8.0'] = final_merge[f'abs_{mag3}_I'] - final_merge[f'abs_{mag4}_I']
+
 plt.figure(figsize=(10, 6))
-plt.scatter(merged_IM['4.5-24'], merged_IM['Gmag-3.6'], alpha=0.5)
-plt.xlabel('[4.5-24]')
-plt.ylabel('[Gmag-3.6]')
+plt.scatter(final_merge['5.8-8.0'], final_merge['3.6-4.5'], alpha=0.5)
+plt.xlabel('[5.8 - 8.0]')
+plt.ylabel('[3.6 - 4.5]')
 plt.title('Diagrama Color-Color desenrojecido')
 plt.grid(True)
-plt.savefig('./Figuras/[Gmag-3.6]_[4.5-24].png')
+plt.savefig('./Figuras/final_[3.6-4.5]_[5.8 - 8.0].png')
+
+final_merge.to_csv("./SEDS/merged_data.csv", index=False)
