@@ -40,15 +40,19 @@ W_valid_indices = (W1_error_pct <= 20) & (W2_error_pct <= 20) & (W3_error_pct <=
 M_valid_indices = (M1_error_pct <= 20)  
 ## & (M2_error_pct <= 20)
 
+
 # Aplicar el filtro a todos los arrays
 I_filtered_array = {col: I_array[col][I_valid_indices] for col in I.columns}
 W_filtered_array = {col: W_array[col][W_valid_indices] for col in W.columns}
 M_filtered_array = {col: M_array[col][M_valid_indices] for col in M.columns}
 
+
 # Crear DataFrame filtrado
 I_filtered = pd.DataFrame(I_filtered_array)
 W_filtered = pd.DataFrame(W_filtered_array)
 M_filtered = pd.DataFrame(M_filtered_array)
+
+print(I_filtered["OBJECT_ID"])
 
 ###### Cálculo magnitud absoluta con extinción 
 
@@ -65,6 +69,7 @@ Gaia_data_I = Gaia_data_I[(Gaia_data_I['parallax_err']/ Gaia_data_I['parallax'])
 Gaia_data_W = Gaia_data_W[(Gaia_data_W['parallax_err']/ Gaia_data_W['parallax']) <= 20]
 Gaia_data_M = Gaia_data_M[(Gaia_data_M['parallax_err']/ Gaia_data_M['parallax']) <= 20]
 
+
 # Fusionar los datos del paralaje con los datos filtrados
 merged_data_I = I_filtered.merge(Gaia_data_I, left_on='OBJECT_ID', right_on='identifier')
 merged_data_W = W_filtered.merge(Gaia_data_W, left_on='OBJECT_ID', right_on='identifier')
@@ -74,6 +79,7 @@ merged_data_M = M_filtered.merge(Gaia_data_I, left_on='OBJECT_ID', right_on='ide
 merged_data_I['distance_pc'] = 1000.0 / merged_data_I['parallax']
 merged_data_W['distance_pc'] = 1000.0 / merged_data_W['parallax']
 merged_data_M['distance_pc'] = 1000.0 / merged_data_M['parallax']
+
 
 # Calcular la magnitud absoluta usando la fórmula M = m - 5 log10(d) + 5
 #for mag in [mag1, mag2, mag3, mag4, 'Gmag']:
@@ -86,27 +92,27 @@ WebdaValues = np.array([0.28665, 0.18082, 0.11675, 0.05228,	0.03574, 0.02459, 0.
 
 # Calcula la magnitud absoluta y corrige por extinsión usando la fórmula M = m - 5 log10(d) + 5 - A_channel
 # A_lambda = 3.1 * ReddeningLambdaOrionis * WebdaValue
-# A_lambda = 3.1 * 0.05 * WebdaValue
+# A_lambda = 3.1 * 0.103 * WebdaValue
 # IRAC
-merged_data_I[f'abs_{mag1}'] = merged_data_I[mag1] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[3]
-merged_data_I[f'abs_{mag2}'] = merged_data_I[mag2] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[4]
-merged_data_I[f'abs_{mag3}'] = merged_data_I[mag3] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[5]
-merged_data_I[f'abs_{mag4}'] = merged_data_I[mag4] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[6]
-merged_data_I[f'abs_Gmag'] = merged_data_I['Gmag'] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.05
+merged_data_I[f'abs_{mag1}'] = merged_data_I[mag1] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[3]
+merged_data_I[f'abs_{mag2}'] = merged_data_I[mag2] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[4]
+merged_data_I[f'abs_{mag3}'] = merged_data_I[mag3] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[5]
+merged_data_I[f'abs_{mag4}'] = merged_data_I[mag4] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[6]
+merged_data_I[f'abs_Gmag'] = merged_data_I['Gmag'] - 5 * np.log10(merged_data_I['distance_pc']) + 5 - 3.1 * 0.103
 # WISE
-merged_data_W[f'abs_{mag1}'] = merged_data_W[mag1] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[10]
-merged_data_W[f'abs_{mag2}'] = merged_data_W[mag2] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[11]
-merged_data_W[f'abs_{mag3}'] = merged_data_W[mag3] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[12]
-merged_data_W[f'abs_{mag4}'] = merged_data_W[mag4] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[13]
-merged_data_W[f'abs_Gmag'] = merged_data_W['Gmag'] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.05
+merged_data_W[f'abs_{mag1}'] = merged_data_W[mag1] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[10]
+merged_data_W[f'abs_{mag2}'] = merged_data_W[mag2] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[11]
+merged_data_W[f'abs_{mag3}'] = merged_data_W[mag3] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[12]
+merged_data_W[f'abs_{mag4}'] = merged_data_W[mag4] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[13]
+merged_data_W[f'abs_Gmag'] = merged_data_W['Gmag'] - 5 * np.log10(merged_data_W['distance_pc']) + 5 - 3.1 * 0.103
 #MIPS
-merged_data_M[f'abs_{mag1}'] = merged_data_M[mag1] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[7]
-## merged_data_M[f'abs_{mag2}'] = merged_data_M[mag2] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.05 * WebdaValues[8]
-merged_data_M[f'abs_Gmag'] = merged_data_M['Gmag'] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.05
+merged_data_M[f'abs_{mag1}'] = merged_data_M[mag1] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[7]
+## merged_data_M[f'abs_{mag2}'] = merged_data_M[mag2] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[8]
+merged_data_M[f'abs_Gmag'] = merged_data_M['Gmag'] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.103
 
 # Imprimir los resultados
-print(merged_data_I[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
-#print(merged_data_W[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
+#print(merged_data_I[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
+print(merged_data_W[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
 #print(merged_data_M[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', 'abs_Gmag', 'parallax', 'parallax_err']])
 
 # Calcular los colores [3.6-4.5] y [5.8-8.0]
