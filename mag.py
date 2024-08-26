@@ -110,6 +110,20 @@ merged_data_M[f'abs_{mag1}'] = merged_data_M[mag1] - 5 * np.log10(merged_data_M[
 ## merged_data_M[f'abs_{mag2}'] = merged_data_M[mag2] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.103 * WebdaValues[8]
 merged_data_M[f'abs_Gmag'] = merged_data_M['Gmag'] - 5 * np.log10(merged_data_M['distance_pc']) + 5 - 3.1 * 0.103
 
+# Calcular el error en la magnitud absoluta según la forma general de propagación de errores aleatorios
+# \Delta M = \left[ (\Delta m)^2 + \left(\frac{5}{P_x ln10} \Delta P_x)   \right]^{1/2}
+merged_data_I[f'abs_{mag1_error}'] = np.sqrt( merged_data_I[mag1_error]*2 + ((5 * merged_data_I['parallax_err'])/(merged_data_I['parallax'] * np.log(10)))*2 )
+merged_data_I[f'abs_{mag2_error}'] = np.sqrt( merged_data_I[mag2_error]*2 + ((5 * merged_data_I['parallax_err'])/(merged_data_I['parallax'] * np.log(10)))*2 )
+merged_data_I[f'abs_{mag3_error}'] = np.sqrt( merged_data_I[mag3_error]*2 + ((5 * merged_data_I['parallax_err'])/(merged_data_I['parallax'] * np.log(10)))*2 )
+merged_data_I[f'abs_{mag4_error}'] = np.sqrt( merged_data_I[mag4_error]*2 + ((5 * merged_data_I['parallax_err'])/(merged_data_I['parallax'] * np.log(10)))*2 )
+
+merged_data_M[f'abs_{mag1_error}'] = np.sqrt( merged_data_M[mag1_error]*2 + ((5 * merged_data_M['parallax_err'])/(merged_data_M['parallax'] * np.log(10)))*2 )
+
+merged_data_W[f'abs_{mag1_error}'] = np.sqrt( merged_data_W[mag1_error]*2 + ((5 * merged_data_W['parallax_err'])/(merged_data_W['parallax'] * np.log(10)))*2 )
+merged_data_W[f'abs_{mag2_error}'] = np.sqrt( merged_data_W[mag2_error]*2 + ((5 * merged_data_W['parallax_err'])/(merged_data_W['parallax'] * np.log(10)))*2 )
+merged_data_W[f'abs_{mag3_error}'] = np.sqrt( merged_data_W[mag3_error]*2 + ((5 * merged_data_W['parallax_err'])/(merged_data_W['parallax'] * np.log(10)))*2 )
+merged_data_W[f'abs_{mag4_error}'] = np.sqrt( merged_data_W[mag4_error]*2 + ((5 * merged_data_W['parallax_err'])/(merged_data_W['parallax'] * np.log(10)))*2 )
+
 # Imprimir los resultados
 #print(merged_data_I[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
 #print(merged_data_W[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
