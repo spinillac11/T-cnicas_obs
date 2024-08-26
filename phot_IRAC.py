@@ -245,6 +245,7 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
  # phot_table['Rout'] = r_out
  # phot_table['AIRTEMP'] = ccdtemp
   phot_table['OBJECT'] = fits_header['OBJECT']
+  
   # Se buscan los indices en donde las magnitudes sean NaN y se eliminan
   index_nan = np.argwhere(np.isnan(phot_table[name_mag + '_mag'].data)) 
   phot_table.remove_rows(index_nan)
@@ -255,9 +256,9 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
 #########################################
 # Definición de parámetros fotométricos #
 #########################################
-r = 6 #Apertura en px
-r_in = 6 #Radio interno anillo cielo
-r_out = 14 #Radio externo
+r = 12 #Apertura en px
+r_in = 12 #Radio interno anillo cielo
+r_out = 24 #Radio externo
 #########################################
 # Se imprime la tabla en un archivo de texto plano
 all_tables = []

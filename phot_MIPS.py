@@ -263,9 +263,9 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
 #########################################
 # Definición de parámetros fotométricos #
 #########################################
-r = 6 #Apertura en px
-r_in = 6 #Radio interno anillo cielo
-r_out = 14 #Radio externo
+r = 9 #Apertura en px
+r_in = 9 #Radio interno anillo cielo
+r_out = 20 #Radio externo
 #########################################
 # Se imprime la tabla en un archivo de texto plano
 all_tables = []

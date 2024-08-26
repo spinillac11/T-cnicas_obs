@@ -276,9 +276,9 @@ def Photometry_Data_Table(fits_name, fits_path, catalogo, r, r_in, r_out, center
 #########################################
 # Definición de parámetros fotométricos #
 #########################################
-r = 9 #Apertura en px
-r_in = 9 #Radio interno anillo cielo
-r_out = 20 #Radio externo
+r = 12 #Apertura en px
+r_in = 12 #Radio interno anillo cielo
+r_out = 24 #Radio externo
 #########################################
 # Se imprime la tabla en un archivo de texto plano
 all_tables = []
@@ -288,6 +288,7 @@ for k in range(len(archivos)):
 #  catalogo = catalogo_final
 
   photom = Photometry_Data_Table(fits_name, fits_path, catalogo, r=r, r_in=r_in, r_out=r_out, center_box_size=center_box_size)
+  print(photom)
   if photom != None:
     all_tables.append(photom)
 
