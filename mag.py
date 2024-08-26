@@ -112,7 +112,7 @@ merged_data_M[f'abs_Gmag'] = merged_data_M['Gmag'] - 5 * np.log10(merged_data_M[
 
 # Imprimir los resultados
 #print(merged_data_I[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
-print(merged_data_W[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
+#print(merged_data_W[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', mag3, f'abs_{mag3}', mag4, f'abs_{mag4}', 'abs_Gmag', 'parallax', 'parallax_err']])
 #print(merged_data_M[['OBJECT_ID', mag1, f'abs_{mag1}', mag2, f'abs_{mag2}', 'abs_Gmag', 'parallax', 'parallax_err']])
 
 # Calcular los colores [3.6-4.5] y [5.8-8.0]
@@ -133,14 +133,35 @@ merged_IW['4.5-22'] = merged_IW[f'abs_{mag2}_I'] - merged_IW[f'abs_{mag4}_W']
 merged_IM['Gmag-3.6'] = merged_IM['abs_Gmag_I'] - merged_IM[f'abs_{mag1}_I']
 #merged_IM['4.5-24'] = merged_IM[f'abs_{mag2}_I'] - merged_IM[f'abs_{mag1}_M']
 
+
+########## Region class 2
+# Filtrar las estrellas que cumplen con las condiciones especificadas
+filtered_stars = merged_data_I[(merged_data_I['3.6-4.5'] > 0) & (merged_data_I['3.6-4.5'] < 0.7) &
+                               (merged_data_I['5.8-8.0'] > 0.4) & (merged_data_I['5.8-8.0'] < 1.2)]
+
+# Imprimir los IDs de las estrellas que cumplen las condiciones
+print(filtered_stars['OBJECT_ID'])
+
 # Crear el diagrama color-color
 plt.figure(figsize=(10, 6))
 plt.scatter(merged_data_I['5.8-8.0'], merged_data_I['3.6-4.5'], alpha=0.5)
+
+# Resaltar las estrellas que cumplen las condiciones
+plt.scatter(filtered_stars['5.8-8.0'], filtered_stars['3.6-4.5'], color='red', alpha=0.7, label='Possible class2 stars')
+
+# Dibujar el cuadrado en el gráfico
+plt.axvline(x=0.4, color='blue', linestyle='--')
+plt.axvline(x=1.2, color='blue', linestyle='--')
+plt.axhline(y=0, color='blue', linestyle='--')
+plt.axhline(y=0.7, color='blue', linestyle='--')
+
 plt.xlabel('[5.8 - 8.0]')
 plt.ylabel('[3.6 - 4.5]')
 plt.title('Diagrama Color-Color desenrojecido')
 plt.grid(True)
-plt.savefig('./Figuras/[3.6-4.5]_[5.8 - 8.0].png')
+plt.legend()
+plt.savefig('./Figuras/[3.6-4.5]_[5.8-8.0].png')
+##########################
 
 # Crear el diagrama color-color
 plt.figure(figsize=(10, 6))
@@ -166,6 +187,13 @@ final_merge = pd.merge(merged_IW, merged_data_M, on='OBJECT_ID', suffixes=('', '
 
 final_merge['3.6-4.5'] = final_merge[f'abs_{mag1}_I'] - final_merge[f'abs_{mag2}_I']
 final_merge['5.8-8.0'] = final_merge[f'abs_{mag3}_I'] - final_merge[f'abs_{mag4}_I']
+
+filtered_stars_final = final_merge[(final_merge['3.6-4.5'] > 0) & (final_merge['3.6-4.5'] < 0.7) &
+                               (final_merge['5.8-8.0'] > 0.4) & (final_merge['5.8-8.0'] < 1.2)]
+
+print("En los tres catalogos:")
+print(filtered_stars_final['OBJECT_ID'])
+
 
 plt.figure(figsize=(10, 6))
 plt.scatter(final_merge['5.8-8.0'], final_merge['3.6-4.5'], alpha=0.5)
