@@ -54,21 +54,26 @@ for index, row in mag_df.iterrows():
     flux_sorted = np.array(flux_values)[sorted_indices]
     flux_err_sorted = np.array(flux_values_err)[sorted_indices]
 
+    alpha = (np.log10(flux_sorted[4] * Lambda_sorted[4])-np.log10(flux_sorted[1] * Lambda_sorted[1]))/(np.log10(Lambda_sorted[4])-np.log10(Lambda_sorted[2]))
 
-    print(index, int(row['OBJECT_ID']), flux_values, "\t")
+
+    print(index, int(row['OBJECT_ID']), "Alpha =", alpha, "\t")
 
     # Graficar
     plt.errorbar(np.log10(Lambda_sorted), np.log10(flux_sorted * Lambda_sorted), yerr=flux_err_sorted/(np.log(10)*flux_sorted), fmt='o', ecolor='green', capsize=5, linestyle='-', color='royalblue', markerfacecolor='red', markeredgewidth=0)
-    plt.title(f"Flujo vs Longitud de Onda para Estrella ID={int(row['OBJECT_ID'])}")
-    plt.xlabel("Log(Longitud de Onda) (µm)")
-    plt.ylabel("Log(Flujo x Longitud de Onda) (erg/s/cm²/Hz µm)")
+    plt.title(f"ID={int(row['OBJECT_ID'])}")
+    plt.xlabel("Log($\lambda$) (µm)")
+    plt.ylabel("Log(F x $\lambda$) (erg/s/cm²/Hz µm)")
     plt.grid(True)
+    plt.text(0.95, 0.95, 'Alpha = {:.2f}'.format(alpha), 
+         horizontalalignment='right', verticalalignment='top', 
+         transform=plt.gca().transAxes, fontsize=14, color='black')
     plt.savefig(f'./SEDS/seds_{index}.png')
     plt.close()  # Cerrar la figura para liberar memoria
 
     if int(row['OBJECT_ID']) == 3336110521410475904:
         plt.figure(figsize=(10, 6))
-        
+
         magJ =  12.329 - 5 * np.log10(row['distance_pc']) + 5 - 3.1 * 0.103 * 0.28665
         magH =  11.658 - 5 * np.log10(row['distance_pc']) + 5 - 3.1 * 0.103 * 0.18082
         magK =  11.327 - 5 * np.log10(row['distance_pc']) + 5 - 3.1 * 0.103 * 0.11675
