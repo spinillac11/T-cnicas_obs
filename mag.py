@@ -58,7 +58,7 @@ print(I_filtered["OBJECT_ID"])
 
 # Lee el archivo de paralaje, seleccionando las columnas 3 y 4 (identificador y paralaje)
 Gaia_data_I = pd.read_csv('./Input/I1_filtrado.txt', delimiter=' ', header=None, usecols=[2, 3, 4, 5, 6], names=['identifier', 'parallax', 'parallax_err', 'Gmag', 'Gmag_err'])
-Gaia_data_W = pd.read_csv('./Input/w1_filtrado.txt', delimiter=' ', header=None, usecols=[2, 3, 4, 5, 6], names=['identifier', 'parallax', 'parallax_err', 'Gmag', 'Gmag_err'])
+Gaia_data_W = pd.read_csv('./Input/W1_filtrado.txt', delimiter=' ', header=None, usecols=[2, 3, 4, 5, 6], names=['identifier', 'parallax', 'parallax_err', 'Gmag', 'Gmag_err'])
 Gaia_data_M = pd.read_csv('./Input/M1_filtrado.txt', delimiter=' ', header=None, usecols=[2, 3, 4, 5, 6], names=['identifier', 'parallax', 'parallax_err', 'Gmag', 'Gmag_err'])
 
 # Filtrar datos de paralaje inválidos
@@ -68,7 +68,6 @@ Gaia_data_M = Gaia_data_M[Gaia_data_M['parallax'] > 0]
 Gaia_data_I = Gaia_data_I[(Gaia_data_I['parallax_err']/ Gaia_data_I['parallax']) <= 20]
 Gaia_data_W = Gaia_data_W[(Gaia_data_W['parallax_err']/ Gaia_data_W['parallax']) <= 20]
 Gaia_data_M = Gaia_data_M[(Gaia_data_M['parallax_err']/ Gaia_data_M['parallax']) <= 20]
-
 
 # Fusionar los datos del paralaje con los datos filtrados
 merged_data_I = I_filtered.merge(Gaia_data_I, left_on='OBJECT_ID', right_on='identifier')
@@ -80,11 +79,6 @@ merged_data_I['distance_pc'] = 1000.0 / merged_data_I['parallax']
 merged_data_W['distance_pc'] = 1000.0 / merged_data_W['parallax']
 merged_data_M['distance_pc'] = 1000.0 / merged_data_M['parallax']
 
-
-# Calcular la magnitud absoluta usando la fórmula M = m - 5 log10(d) + 5
-#for mag in [mag1, mag2, mag3, mag4, 'Gmag']:
-    #merged_data_I[f'abs_{mag}'] = merged_data_I[mag] - 5 * np.log10(merged_data_I['distance_pc']) + 5
-    #merged_data_W[f'abs_{mag}'] = merged_data_W[mag] - 5 * np.log10(merged_data_W['distance_pc']) + 5
 
 # Array con los valores A_lambda / A_v de WEBDA
 #                           J	    H	    Ks	   IRAC_3.6	IRAC_4.5 IRAC_5.8 IRAC_8.0 MIPS_24  MIPS_70	 MIPS_160	W1	      W2	   W3	    W4
@@ -145,12 +139,12 @@ merged_IW['4.5-22'] = merged_IW[f'abs_{mag2}_I'] - merged_IW[f'abs_{mag4}_W']
 
 #Colores [Gmag-3.6] y [4.5-24]
 merged_IM['Gmag-3.6'] = merged_IM['abs_Gmag_I'] - merged_IM[f'abs_{mag1}_I']
-#merged_IM['4.5-24'] = merged_IM[f'abs_{mag2}_I'] - merged_IM[f'abs_{mag1}_M']
+merged_IM['4.5-24'] = merged_IM[f'abs_{mag2}'] - merged_IM[f'abs_{mag1}_M']
 
 
 ########## Region class 2
 # Filtrar las estrellas que cumplen con las condiciones especificadas
-filtered_stars = merged_data_I[(merged_data_I['3.6-4.5'] > 0) & (merged_data_I['3.6-4.5'] < 0.7) &
+filtered_stars = merged_data_I[(merged_data_I['3.6-4.5'] > 0) & (merged_data_I['3.6-4.5'] < 0.8) &
                                (merged_data_I['5.8-8.0'] > 0.4) & (merged_data_I['5.8-8.0'] < 1.2)]
 
 # Imprimir los IDs de las estrellas que cumplen las condiciones
@@ -158,24 +152,43 @@ print(filtered_stars['OBJECT_ID'])
 
 # Crear el diagrama color-color
 plt.figure(figsize=(10, 6))
-plt.scatter(merged_data_I['5.8-8.0'], merged_data_I['3.6-4.5'], alpha=0.5)
+plt.scatter(merged_data_I['5.8-8.0'], merged_data_I['3.6-4.5'], alpha=0.5, s=10)
 
 # Resaltar las estrellas que cumplen las condiciones
-plt.scatter(filtered_stars['5.8-8.0'], filtered_stars['3.6-4.5'], color='red', alpha=0.7, label='Possible class2 stars')
+plt.scatter(filtered_stars['5.8-8.0'], filtered_stars['3.6-4.5'], color='red', alpha=0.7, s=20, label='Possible class2 stars')
 
 # Dibujar el cuadrado en el gráfico
 plt.axvline(x=0.4, color='blue', linestyle='--')
 plt.axvline(x=1.2, color='blue', linestyle='--')
 plt.axhline(y=0, color='blue', linestyle='--')
-plt.axhline(y=0.7, color='blue', linestyle='--')
+plt.axhline(y=0.8, color='blue', linestyle='--')
 
 plt.xlabel('[5.8 - 8.0]')
 plt.ylabel('[3.6 - 4.5]')
+plt.ylim(-0.3, 1.5)
+plt.xlim(-0.2, 2)
 plt.title('Diagrama Color-Color desenrojecido')
 plt.grid(True)
 plt.legend()
 plt.savefig('./Figuras/[3.6-4.5]_[5.8-8.0].png')
 ##########################
+
+## Diagrama color-magnitud
+
+plt.figure(figsize=(10, 6))
+plt.gca().invert_yaxis()
+plt.scatter(merged_data_I['3.6-4.5'], merged_data_I[mag1], alpha=0.5, s=10)
+
+# Resaltar las estrellas que cumplen las condiciones
+plt.scatter(filtered_stars['3.6-4.5'], filtered_stars[mag1], color='red', alpha=0.7, s=20, label='Possible class2 stars')
+
+plt.xlabel('3.6-4.5')
+plt.ylabel('[3.6]')
+plt.ylim(16.5, 8)
+plt.title('Diagrama Color-magnitud')
+plt.grid(True)
+plt.legend()
+plt.savefig('./Figuras/[3.6]_[3.6-4.5].png')
 
 # Crear el diagrama color-color
 plt.figure(figsize=(10, 6))
@@ -187,13 +200,13 @@ plt.grid(True)
 plt.savefig('./Figuras/[Gmag-3.6]_[4.5-22].png')
 
 # Crear el diagrama color-color
-##plt.figure(figsize=(10, 6))
-##plt.scatter(merged_IM['4.5-24'], merged_IM['Gmag-3.6'], alpha=0.5)
-##plt.xlabel('[4.5-24]')
-##plt.ylabel('[Gmag-3.6]')
-##plt.title('Diagrama Color-Color desenrojecido')
-##plt.grid(True)
-##plt.savefig('./Figuras/[Gmag-3.6]_[4.5-24].png')
+plt.figure(figsize=(10, 6))
+plt.scatter(merged_IM['4.5-24'], merged_IM['Gmag-3.6'], alpha=0.5)
+plt.xlabel('[4.5-24]')
+plt.ylabel('[Gmag-3.6]')
+plt.title('Diagrama Color-Color desenrojecido')
+plt.grid(True)
+plt.savefig('./Figuras/[Gmag-3.6]_[4.5-24].png')
 
 ################# SEDS ##############
 
@@ -202,7 +215,7 @@ final_merge = pd.merge(merged_IW, merged_data_M, on='OBJECT_ID', suffixes=('', '
 final_merge['3.6-4.5'] = final_merge[f'abs_{mag1}_I'] - final_merge[f'abs_{mag2}_I']
 final_merge['5.8-8.0'] = final_merge[f'abs_{mag3}_I'] - final_merge[f'abs_{mag4}_I']
 
-filtered_stars_final = final_merge[(final_merge['3.6-4.5'] > 0) & (final_merge['3.6-4.5'] < 0.7) &
+filtered_stars_final = final_merge[(final_merge['3.6-4.5'] > 0) & (final_merge['3.6-4.5'] < 0.8) &
                                (final_merge['5.8-8.0'] > 0.4) & (final_merge['5.8-8.0'] < 1.2)]
 
 print("En los tres catalogos:")
