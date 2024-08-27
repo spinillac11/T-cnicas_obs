@@ -52,7 +52,6 @@ I_filtered = pd.DataFrame(I_filtered_array)
 W_filtered = pd.DataFrame(W_filtered_array)
 M_filtered = pd.DataFrame(M_filtered_array)
 
-print(I_filtered["OBJECT_ID"])
 
 ###### Cálculo magnitud absoluta con extinción 
 
@@ -147,8 +146,6 @@ merged_IM['4.5-24'] = merged_IM[f'abs_{mag2}'] - merged_IM[f'abs_{mag1}_M']
 filtered_stars = merged_data_I[(merged_data_I['3.6-4.5'] > 0) & (merged_data_I['3.6-4.5'] < 0.8) &
                                (merged_data_I['5.8-8.0'] > 0.4) & (merged_data_I['5.8-8.0'] < 1.2)]
 
-# Imprimir los IDs de las estrellas que cumplen las condiciones
-print(filtered_stars['OBJECT_ID'])
 
 # Crear el diagrama color-color
 plt.figure(figsize=(10, 6))
